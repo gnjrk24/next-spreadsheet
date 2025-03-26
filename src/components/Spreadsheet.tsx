@@ -9,6 +9,10 @@ export default function Spreadsheet() {
     [7, 8, 10],
     [11, 12, 13],
   ]);
+  const persist = () => {
+    const data = JSON.stringify(cellContents);
+    window.localStorage.setItem("cells", data);
+  };
   console.log(cellContents);
   return (
     <>
@@ -29,7 +33,9 @@ export default function Spreadsheet() {
                     content={cell}
                     onChange={(updated: CellContent) => {
                       const updatedCellContents = [...cellContents];
+                      console.table(updatedCellContents);
                       updatedCellContents[i][j] = updated;
+                      console.table(updatedCellContents);
                       setCellContents(updatedCellContents);
                     }}
                   />
