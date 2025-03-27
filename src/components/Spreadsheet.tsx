@@ -1,19 +1,33 @@
 import Cell from "./Cell";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CellContent } from "@/types/sheet";
 
 export default function Spreadsheet() {
   const [cellContents, setCellContents] = useState<Array<Array<CellContent>>>([
     [1, 2, 3],
     [4, 5, 6],
-    [7, 8, 10],
-    [11, 12, 13],
+    [7, 8, 9],
   ]);
   const persist = () => {
-    const data = JSON.stringify(cellContents);
-    window.localStorage.setItem("cells", data);
+    fetch("/api/cells", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify({ cells: cellContents }),
+    });
   };
-  console.log(cellContents);
+
+  useEffect(() => {
+    fetch("/api/cells").then((res) =>
+      res.text().then((s) => {
+        const data = JSON.parse(s);
+        if (data.cells) {
+          setCellContents(data.cells);
+          console.log(s);
+        }
+      })
+    );
+  }, []);
+
   return (
     <>
       <table>
@@ -71,6 +85,8 @@ export default function Spreadsheet() {
       >
         - column
       </button>
+      <br />
+      <button onClick={persist}>save</button>
     </>
   );
 }
